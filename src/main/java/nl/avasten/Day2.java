@@ -96,17 +96,10 @@ public class Day2 {
 
         for (String measurement : perMeasurement) {
             // Split each measurement into color and value
-
-//            System.out.println("Measurement: " + measurement);
             String color = measurement.replaceAll("\\d", "");
             int count = Integer.parseInt(measurement.replaceAll("\\D", ""));
-
-//            System.out.println("Measurement: " + measurement + " , color: " + color + " , count: " + count);
             colorsCount.merge(color, count, Integer::max);
         }
-
-//        System.out.println("List: " + text);
-//        System.out.println(colorsCount);
 
         return colorsCount;
     }
@@ -115,11 +108,7 @@ public class Day2 {
 
         System.out.println(input.get("blue"));
 
-        if (input.get("blue") <= qtyBlue && input.get("red") <= qtyRed && input.get("green") <= qtyGreen) {
-            return true;
-        } else {
-            return false;
-        }
+        return input.get("blue") <= qtyBlue && input.get("red") <= qtyRed && input.get("green") <= qtyGreen;
     }
 
     public int powerOfCubes(Map<String, Integer> input) {
