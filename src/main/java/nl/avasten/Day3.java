@@ -10,7 +10,6 @@ import java.util.*;
 @Path("/day3")
 public class Day3 {
 
-    int sum = 0;
     static final int lineSize = 140;
     static Map<Integer, List<Integer>> symbolsPerLine = new HashMap<>();
     static Map<Integer, String> mappedInput = inputToMap();
@@ -19,6 +18,7 @@ public class Day3 {
     @GET
     @Path("/test")
     public String testInput() {
+        int sum = 0;
 
         //Map symbol Positions
         for (int i = 0; i < mappedInput.size(); i++) {
@@ -64,7 +64,7 @@ public class Day3 {
             } else {
                 for (Integer k : numbersAndPosition.keySet()) {
                     List<Integer> positions = numbersAndPosition.get(k);
-
+                    System.out.println("Numv: " + k);
                     if (checkSameLine(i, positions) || checkLineBelow(i, positions) || checkLineAbove(i, positions)) {
                         System.out.println("Line: " + i + " , number: " + k + " , hit: true");
                         sum += k;
@@ -89,7 +89,7 @@ public class Day3 {
 
             while (scanner.hasNextLine()) {
                 String currentLine = scanner.nextLine();
-                currentLine = currentLine.replaceAll("\\.", " ");
+//                currentLine = currentLine.replaceAll("\\.", " ");
                 mappedInput.put(lineNumber, currentLine);
                 lineNumber++;
             }
@@ -119,14 +119,22 @@ public class Day3 {
 
     private static boolean checkSameLine(int lineNumber, List<Integer> positions) {
         // Get left from number:
+//        System.out.println(" Posit: " + positions);
+
         int left = Collections.min(positions) - 1;
         if (left > 0) {
-            return symbolsPerLine.get(lineNumber).contains(left);
+            if (symbolsPerLine.get(lineNumber).contains(left)) {
+                return true;
+            }
         }
 
         int right = Collections.max(positions) + 1;
+//        System.out.println(" right: " + right);
         if (right < lineSize) {
-            return symbolsPerLine.get(lineNumber).contains(right);
+            if (symbolsPerLine.get(lineNumber).contains(right)) {
+//                System.out.println("symbol found");
+                return true;
+            }
         }
 
         return false;
@@ -197,11 +205,11 @@ public class Day3 {
     }
 
     private static boolean isSymbol(char ch) {
-        return !Character.isLetter(ch) && !Character.isDigit(ch) && !Character.isSpaceChar(ch);
+        return !Character.isLetterOrDigit(ch);
     }
 
     private static boolean isNumber(char ch) {
-        return Character.isDigit(ch);
+        return !isSymbol(ch);
     }
 
 
