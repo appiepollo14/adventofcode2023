@@ -13,7 +13,7 @@ public class Day3 {
     static final int lineSize = 140;
     static Map<Integer, List<Integer>> symbolsPerLine = new HashMap<>();
     static Map<Integer, String> mappedInput = inputToMap();
-    static Map<Integer, Map<Integer, List<Integer>>> numbersPerLine = new HashMap<>();
+    static Map<Integer, Map<List<Integer>, Integer>> numbersPerLine = new HashMap<>();
 
     @GET
     @Path("/test")
@@ -33,43 +33,43 @@ public class Day3 {
 
         // check adjecening fields for each number, if found, add to sum
         for (int i = 0; i < numbersPerLine.size(); i++) {
-            Map<Integer, List<Integer>> numbersAndPosition = numbersPerLine.get(i);
+            Map<List<Integer>, Integer> numbersAndPosition = numbersPerLine.get(i);
             // First row
             if (i == 0) {
                 // Loop through each number
-                for (Integer k : numbersAndPosition.keySet()) {
-                    List<Integer> positions = numbersAndPosition.get(k);
+                for (List<Integer> positions : numbersAndPosition.keySet()) {
+                    int number = numbersAndPosition.get(positions);
 
                     if (checkSameLine(i, positions) || checkLineBelow(i, positions)) {
-                        System.out.println("Line: " + i + " , number: " + k + " , hit: true");
-                        sum += k;
+                        System.out.println("Line: " + i + " , number: " + number + " , hit: true");
+                        sum += number;
                     } else {
-                        System.out.println("Line: " + i + " , number: " + k + " , hit: false");
+                        System.out.println("Line: " + i + " , number: " + number + " , hit: false");
                     }
                 }
 
                 // Last row
             } else if (i == numbersPerLine.size() - 1) {
-                for (Integer k : numbersAndPosition.keySet()) {
-                    List<Integer> positions = numbersAndPosition.get(k);
+                for (List<Integer> positions : numbersAndPosition.keySet()) {
+                    int number = numbersAndPosition.get(positions);
 
                     if (checkSameLine(i, positions) || checkLineAbove(i, positions)) {
-                        System.out.println("Line: " + i + " , number: " + k + " , hit: true");
-                        sum += k;
+                        System.out.println("Line: " + i + " , number: " + number + " , hit: true");
+                        sum += number;
                     } else {
-                        System.out.println("Line: " + i + " , number: " + k + " , hit: false");
+                        System.out.println("Line: " + i + " , number: " + number + " , hit: false");
                     }
                 }
                 // All other rows
             } else {
-                for (Integer k : numbersAndPosition.keySet()) {
-                    List<Integer> positions = numbersAndPosition.get(k);
-                    System.out.println("Numv: " + k);
+                for (List<Integer> positions : numbersAndPosition.keySet()) {
+                    int number = numbersAndPosition.get(positions);
+                    //System.out.println("Numv: " + k);
                     if (checkSameLine(i, positions) || checkLineBelow(i, positions) || checkLineAbove(i, positions)) {
-                        System.out.println("Line: " + i + " , number: " + k + " , hit: true");
-                        sum += k;
+                        System.out.println("Line: " + i + " , number: " + number + " , hit: true");
+                        sum += number;
                     } else {
-                        System.out.println("Line: " + i + " , number: " + k + " , hit: false");
+                        System.out.println("Line: " + i + " , number: " + number + " , hit: false");
                     }
                 }
             }
@@ -89,7 +89,7 @@ public class Day3 {
 
             while (scanner.hasNextLine()) {
                 String currentLine = scanner.nextLine();
-//                currentLine = currentLine.replaceAll("\\.", " ");
+                currentLine = currentLine.replaceAll("\\.", " ");
                 mappedInput.put(lineNumber, currentLine);
                 lineNumber++;
             }
@@ -204,17 +204,24 @@ public class Day3 {
         return found;
     }
 
+//    private static boolean isSymbol(char ch) {
+//        return !Character.isLetter(ch) && !Character.isDigit(ch) && !Character.isSpaceChar(ch);
+//    }
+//
+//    private static boolean isNumber(char ch) {
+//        return !isSymbol(ch);
+//    }
+
     private static boolean isSymbol(char ch) {
-        return !Character.isLetterOrDigit(ch);
+        return !Character.isLetter(ch) && !Character.isDigit(ch) && !Character.isSpaceChar(ch);
     }
 
     private static boolean isNumber(char ch) {
-        return !isSymbol(ch);
+        return Character.isDigit(ch);
     }
 
-
-    private static Map<Integer, List<Integer>> getNumberPositionMap(String currentLine) {
-        Map<Integer, List<Integer>> numberPositionMap = new HashMap<>();
+    private static Map<List<Integer>, Integer> getNumberPositionMap(String currentLine) {
+        Map<List<Integer>, Integer> numberPositionMap = new HashMap<>();
 
         StringBuilder number = new StringBuilder();
         List<Integer> positions = new ArrayList<>();
@@ -225,7 +232,7 @@ public class Day3 {
                 positions.add(i);
             } else {
                 if (!number.isEmpty()) {
-                    numberPositionMap.put(Integer.parseInt(number.toString()), positions);
+                    numberPositionMap.put(positions, Integer.parseInt(number.toString()));
                     number = new StringBuilder();
                     positions = new ArrayList<>();
                 }
@@ -233,7 +240,7 @@ public class Day3 {
 
         }
         if (!number.isEmpty()) {
-            numberPositionMap.put(Integer.parseInt(number.toString()), positions);
+            numberPositionMap.put(positions, Integer.parseInt(number.toString()));
         }
 //        System.out.println(numberPositionMap);
 
