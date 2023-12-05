@@ -16,7 +16,7 @@ public class Day5 {
     public String calculate() {
 
         int lineNumber = 0;
-        List<Long> seedList;
+        List<Long> seedList = new ArrayList<>();
 
         try {
             Scanner scanner = new Scanner(new File("src/main/resources/puzzle5.txt"));
@@ -60,17 +60,15 @@ public class Day5 {
             e.printStackTrace();
         }
 
-        System.out.println(ranges.toString());
+        List<Long> locations = new ArrayList<>();
 
-        Long seed = 26921883L;
+        for (Long i: seedList) {
+            locations.add(humidityToLocation(temperatureToHumidity(lightToTemperature(waterToLight(fertilizerToWater(soilToFertilizer(seedToSoil(i))))))));
+        }
 
-        Long soil = seedToSoil(seed);
+        System.out.println(locations);
 
-        Long fertilzer = soilToFertilizer(soil);
-
-        System.out.println(fertilzer);
-
-        return "Sum: " + null;
+        return "Min loc: " + Collections.min(locations);
 
     }
 
@@ -106,6 +104,91 @@ public class Day5 {
         }
 
         return soil;
+    }
+
+    private long fertilizerToWater(Long fertilizer) {
+        List<Range> fertilizerToWaterRanges = ranges.get("fertilizer-to-water");
+        Long water;
+        for (Range r : fertilizerToWaterRanges) {
+            if (fertilizer >= r.getSourceStart() && fertilizer <= r.getSourceEnd()) {
+//                System.out.println("Found range: " + r);
+                Long diff = fertilizer - r.getSourceStart();
+//                System.out.println("Diff: " + diff);
+                water = r.getDestinationStart() + diff;
+//                System.out.println("Soil: " + soil);
+                return water;
+            }
+        }
+
+        return fertilizer;
+    }
+
+    private long waterToLight(Long water) {
+        List<Range> waterToLightRanges = ranges.get("water-to-light");
+        Long light;
+        for (Range r : waterToLightRanges) {
+            if (water >= r.getSourceStart() && water <= r.getSourceEnd()) {
+//                System.out.println("Found range: " + r);
+                Long diff = water - r.getSourceStart();
+//                System.out.println("Diff: " + diff);
+                light = r.getDestinationStart() + diff;
+//                System.out.println("Soil: " + soil);
+                return light;
+            }
+        }
+
+        return water;
+    }
+
+    private long lightToTemperature(Long light) {
+        List<Range> waterToLightRanges = ranges.get("light-to-temperature");
+        Long temperature;
+        for (Range r : waterToLightRanges) {
+            if (light >= r.getSourceStart() && light <= r.getSourceEnd()) {
+//                System.out.println("Found range: " + r);
+                Long diff = light - r.getSourceStart();
+//                System.out.println("Diff: " + diff);
+                temperature = r.getDestinationStart() + diff;
+//                System.out.println("Soil: " + soil);
+                return temperature;
+            }
+        }
+
+        return light;
+    }
+
+    private long temperatureToHumidity(Long temperature) {
+        List<Range> waterToLightRanges = ranges.get("temperature-to-humidity");
+        Long humidity;
+        for (Range r : waterToLightRanges) {
+            if (temperature >= r.getSourceStart() && temperature <= r.getSourceEnd()) {
+//                System.out.println("Found range: " + r);
+                Long diff = temperature - r.getSourceStart();
+//                System.out.println("Diff: " + diff);
+                humidity = r.getDestinationStart() + diff;
+//                System.out.println("Soil: " + soil);
+                return humidity;
+            }
+        }
+
+        return temperature;
+    }
+
+    private long humidityToLocation(Long humidity) {
+        List<Range> waterToLightRanges = ranges.get("humidity-to-location");
+        Long location;
+        for (Range r : waterToLightRanges) {
+            if (humidity >= r.getSourceStart() && humidity <= r.getSourceEnd()) {
+//                System.out.println("Found range: " + r);
+                Long diff = humidity - r.getSourceStart();
+//                System.out.println("Diff: " + diff);
+                location = r.getDestinationStart() + diff;
+//                System.out.println("Soil: " + soil);
+                return location;
+            }
+        }
+
+        return humidity;
     }
 
     private static boolean isNumber(char ch) {
