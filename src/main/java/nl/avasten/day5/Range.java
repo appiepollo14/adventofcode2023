@@ -1,31 +1,45 @@
-package nl.avasten.day4;
-
-import java.util.ArrayList;
-import java.util.List;
+package nl.avasten.day5;
 
 public class Range {
 
     private String type;
-    private Long start;
-    private Long end;
+    private long destinationStart;
+    private long destinationEnd;
+    private long sourceStart;
+    private long sourceEnd;
 
-    public Range(String type, Long start, Long end) {
+    public Range(String type, long destinationStart, long sourceStart, long range) {
         this.type = type;
-        this.start = start;
-        this.end = end;
+        this.destinationStart = destinationStart;
+        this.destinationEnd = destinationStart + range - 1;
+        this.sourceStart = sourceStart;
+        this.sourceEnd = sourceStart + range - 1;
     }
 
-    public String getType() {
-        return type;
+    public long getDestinationStart() {
+        return destinationStart;
     }
 
-    public Long getStart() {
-        return start;
+    public long getDestinationEnd() {
+        return destinationEnd;
     }
 
-
-    public Long getEnd() {
-        return end;
+    public long getSourceStart() {
+        return sourceStart;
     }
 
+    public long getSourceEnd() {
+        return sourceEnd;
+    }
+
+    @Override
+    public String toString() {
+        return "Range{" +
+                "type='" + type + '\'' +
+                ", destinationStart=" + destinationStart +
+                ", destinationEnd=" + destinationEnd +
+                ", sourceStart=" + sourceStart +
+                ", sourceEnd=" + sourceEnd +
+                '}';
+    }
 }
