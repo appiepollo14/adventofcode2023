@@ -18,23 +18,29 @@ public class Day5puzzleB {
         Long startSeed = null;
         Long endSeed;
 
-        List<Long> locations = new ArrayList<>();
+        long location = Long.MAX_VALUE;
 
 
         for (int i = 0; i < pieces.length; i++) {
             if (i % 2 == 0) {
                 startSeed = Long.parseLong(pieces[i]);
             } else {
-                endSeed = Long.parseLong(pieces[i]);
+                endSeed = startSeed + Long.parseLong(pieces[i]) - 1;
+                System.out.println("Startseed: " + startSeed + " , endseed: " + endSeed);
                 for (Long l = startSeed; l <= endSeed; l++) {
-                    locations.add(humidityToLocation(temperatureToHumidity(lightToTemperature(waterToLight(fertilizerToWater(soilToFertilizer(seedToSoil(l))))))));
+                    long r = humidityToLocation(temperatureToHumidity(lightToTemperature(waterToLight(fertilizerToWater(soilToFertilizer(seedToSoil(l)))))));
+                    if (r < location) {
+                        location = r;
+                    }
+
                 }
             }
         }
 
-        return Collections.min(locations);
-    }
+        System.out.println("Min loc: " + location);
 
+        return location;
+    }
 
 
     @GET
