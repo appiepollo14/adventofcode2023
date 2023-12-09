@@ -5,7 +5,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 @Path("/day7")
 public class Day7 {
@@ -14,44 +19,38 @@ public class Day7 {
     @Produces(MediaType.TEXT_PLAIN)
     public String calculateSum() {
 
-        List<Integer> times = List.of(59, 68, 82, 74);
-        List<Integer> distances = List.of(543, 1020, 1664, 1022);
+        int win = 0;
+        List<Hand> hands = linesToHands();
+        Collections.sort(hands);
 
-        long totalWinnings = 0L;
-        {
-            int q = 0;
-            for (int i : times) {
-                if (q == 0) {
-                    totalWinnings = calcOptions(i, distances.get(q));
-                } else {
-                    totalWinnings = totalWinnings * calcOptions(i, distances.get(q));
-                }
-                q++;
-            }
+        for (int i = hands.size(); i >= 1; i--) {
+            System.out.println("Rank: " + (i) + " , bet: " + hands.get(1000 - i).getBet() + " , chars: " + hands.get(1000 - i).getChars());
+            win += (i * hands.get(1000 - i).getBet());
         }
 
-        return "Sum" + totalWinnings;
+        return "Win: " + win;
     }
 
-    public int calcOptions(Integer miliseconds, Integer currentRecord) {
+    public List<Hand> linesToHands() {
 
-        int options = 0;
-        int hold = 1;
+        List<Hand> hands = new ArrayList<>();
 
-        for (int i = miliseconds; i >= 1; i--) {
-            int going = miliseconds - hold;
-            int speed = hold;
-            int length = going * speed;
+        try {
+            Scanner scanner = new Scanner(new File("src/main/resources/puzzle7.txt"));
 
-            if (length > currentRecord) {
-                options++;
+            while (scanner.hasNextLine()) {
+                String currentLine = scanner.nextLine();
+
+                String[] split = currentLine.split(" ");
+
+                hands.add(new Hand(split[0], Integer.parseInt(split[1])));
             }
 
-            System.out.println("Hold seconds: " + hold + " , going seconds: " + going + " , length: " + length);
-
-            hold++;
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
-        return options;
+        return hands;
     }
 }
