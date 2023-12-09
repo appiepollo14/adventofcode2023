@@ -6,13 +6,13 @@ import java.util.Map;
 
 public class Hand implements Comparable<Hand> {
 
-    private final String chars;
+    private final String originalChars;
     private Map<Integer, Integer> qtyPerChar = new HashMap<>();
     private int bet;
     private String resultType;
 
     public Hand(String chars, int bet) {
-        this.chars = chars;
+        this.originalChars = chars;
         this.bet = bet;
         this.qtyPerChar = mapper(chars);
         this.countResult();
@@ -22,8 +22,8 @@ public class Hand implements Comparable<Hand> {
         return bet;
     }
 
-    public String getChars() {
-        return chars;
+    public String getOriginalChars() {
+        return originalChars;
     }
 
     private Map<Integer, Integer> mapper(String chars) {
@@ -79,8 +79,8 @@ public class Hand implements Comparable<Hand> {
         // Sort resulttype highest to lowest
         int result = that.resultType.compareTo(this.resultType);
         if (result == 0) {
-            for (int i = 0; i < that.chars.toCharArray().length; i++) {
-                result = Integer.compare(charToInt(that.chars.toCharArray()[i]),charToInt(this.chars.toCharArray()[i]));
+            for (int i = 0; i < that.originalChars.toCharArray().length; i++) {
+                result = Integer.compare(charToInt(that.originalChars.toCharArray()[i]),charToInt(this.originalChars.toCharArray()[i]));
                 if (result != 0) {
                     return result;
                 }

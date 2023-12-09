@@ -24,7 +24,7 @@ public class Day7 {
         Collections.sort(hands);
 
         for (int i = hands.size(); i >= 1; i--) {
-            System.out.println("Rank: " + (i) + " , bet: " + hands.get(1000 - i).getBet() + " , chars: " + hands.get(1000 - i).getChars());
+//            System.out.println("Rank: " + (i) + " , bet: " + hands.get(1000 - i).getBet() + " , chars: " + hands.get(1000 - i).getOriginalChars());
             win += (i * hands.get(1000 - i).getBet());
         }
 
