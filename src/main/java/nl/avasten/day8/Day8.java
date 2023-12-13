@@ -1,6 +1,5 @@
 package nl.avasten.day8;
 
-import io.quarkus.runtime.Startup;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -18,12 +17,6 @@ public class Day8 {
 
     static {
         mapInput();
-    }
-
-    @Startup
-    public void run() {
-        System.out.println("Starting:");
-        System.out.println(calculateGhostSteps());
     }
 
     @GET
@@ -53,47 +46,42 @@ public class Day8 {
         return "Steps: " + steps + " currentNode: " + currentNode.getNodeName();
     }
 
+
     @GET
     @Path("/b")
     @Produces(MediaType.TEXT_PLAIN)
-    public String calculateGhostSteps() {
+    public String calculateGhostStepsNielsWay() {
 
-        long steps = 0;
-        List<Node> currentNodes = getNodesEndingWithA();
+        List<Node> startNodes = getNodesEndingWithA();
 
-        outerLoop:
-        while (true) {
-            for (char c : instruction.toCharArray()) {
-                List<Node> temp = new ArrayList<>();
-                for (Node n : currentNodes) {
+        List<Integer> listOfSteps = new ArrayList<>();
+
+        for (Node n : startNodes) {
+
+            int steps = 0;
+            Node currentNode = n;
+
+            outerLoop:
+            while (true) {
+                for (char c : instruction.toCharArray()) {
                     if (c == 'L') {
-                        temp.add(getNode(n.getLeftNode()));
+                        currentNode = getNode(currentNode.getLeftNode());
                     } else {
-                        temp.add(getNode(n.getRightNode()));
+                        currentNode = getNode(currentNode.getRightNode());
+                    }
+
+                    steps++;
+                    if (currentNode.getNodeName().endsWith("Z")) {
+                        listOfSteps.add(steps);
+                        break outerLoop;
                     }
                 }
-
-                currentNodes = temp;
-                steps++;
-
-                int check = 0;
-                for (Node n: currentNodes) {
-                    if (n.getNodeName().endsWith("Z")) {
-//                        System.out.println("Klopt!");
-                        check++;
-                    }
-                }
-
-//                System.out.println("Check: " + check);
-                if (check == 6) {
-                    break outerLoop;
-                }
-
-//                System.out.println("CurrentNodes: " + currentNodes + " , steps: " + steps);
             }
         }
 
-        return "Steps: " + steps + " currentNode: " + currentNodes;
+//        https://berekening.net/rekenmachine-van-het-kleinste-gemene-veelvoud solved, de array niet, hoe dan?
+
+        return "Steps: " + findLCMOfArray(listOfSteps);
     }
 
     public Node getNode(String n) {
@@ -145,4 +133,45 @@ public class Day8 {
         }
 
     }
+
+    // Methode om de grootste gemene deler (greatest common divisor - gcd) te berekenen
+    private static int gcd(int a, int b) {
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    // Methode om de kleinste gemene veelvoud (least common multiple - lcm) te berekenen
+    private static int lcm(int a, int b) {
+        return (a * b) / gcd(a, b);
+    }
+
+    // Methode om de kleinste gemene veelvoud van een lijst met getallen te berekenen
+    private static long findLCMOfArray(List<Integer> arr) {
+        int result = arr.get(0);
+        for (int i = 1; i < arr.size(); i++) {
+            result = lcm(result, arr.get(i));
+        }
+        return result;
+    }
+
+//    public static int gcd(int a, int b) {
+//        if (b == 0) {
+//            return a;
+//        }
+//        return gcd(b, a % b);
+//    }
+//
+//    // Function to find the LCM of an array of numbers
+//    public static int findLCM(List<Integer> arr) {
+//        int lcm = arr.get(0);
+//        for (int i = 1; i < arr.size(); i++) {
+//            int currentNumber = arr.get(i);
+//            lcm = (lcm * currentNumber) / gcd(lcm, currentNumber);
+//        }
+//        return lcm;
+//    }
 }
