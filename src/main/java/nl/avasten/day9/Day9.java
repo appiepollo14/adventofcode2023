@@ -42,13 +42,12 @@ public class Day9 {
 
         if (diff.get(0) == 0) {
             System.out.println(diff);
-            System.out.println("STOP");
-            return;
         } else {
+            System.out.println(diff);
             calcDif(diff);
         }
 
-        System.out.println(diff);
+
     }
 
 
