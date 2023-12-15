@@ -31,7 +31,32 @@ public class Day9 {
 		return "Sequences: " + sum;
 	}
 
-	public static long calcAdditional(List<List<Integer>> input) {
+    @GET
+    @Path("/b")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String calculatePrevious() {
+
+		long sum = 0;
+		List<List<Integer>> sequencelist = mapInput();
+
+		for (List<Integer> l : sequencelist) {
+			long nextval = l.getFirst() - calcPrevious(calcDif(l));
+			sum += nextval;
+		}
+
+		return "Sequences: " + sum;
+	}
+
+	public static long calcPrevious(List<List<Integer>> input) {
+		long lastStep = input.getLast().getFirst();
+		System.out.println("Last line first pos: " + lastStep);
+		for (int i = input.size() - 2; i >= 0; i--) {
+			lastStep = input.get(i).getFirst() - lastStep;
+		}
+		return lastStep;
+	}
+
+    public static long calcAdditional(List<List<Integer>> input) {
 		System.out.println("Input: " + input);
 		long lastStep = input.getLast().getLast();
 		for (int i = input.size() - 2; i >= 0; i--) {
@@ -44,7 +69,6 @@ public class Day9 {
 	public static List<List<Integer>> calcDif(List<Integer> input) {
 
 		List<List<Integer>> diffList = new ArrayList<>();
-
 		List<Integer> diff = new ArrayList<>();
 		if (input.size() <= 1) {
 			System.out.println("TOO SMALL");
