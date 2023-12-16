@@ -1,5 +1,6 @@
 package nl.avasten.day10;
 
+import io.quarkus.runtime.Quarkus;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -15,11 +16,8 @@ import java.util.Scanner;
 @Path("/day10")
 public class Day10 {
 
-    static int startPuntRij;
-    static int startPuntKolom;
-    static int steps = 0;
+
     static Coordinate startCoordinate;
-    static Map<Integer, Map<Integer, Character>> mappedInput = new HashMap<>();
     static Map<Integer, Map<Integer, Coordinate>> coordinates = new HashMap<>();
 
     static {
@@ -30,25 +28,92 @@ public class Day10 {
     @Produces(MediaType.TEXT_PLAIN)
     public String calculateSteps() {
 
-        System.out.println("Startpunt rij: " + startPuntRij + ", kolom: " + startPuntKolom);
-        System.out.println("Mapped input: " + mappedInput);
+        Coordinate first = determineFirstStep(startCoordinate);
+        System.out.println("First: " + first);
+        int steps = 1;
+        Coordinate next = determineNextStep(startCoordinate, first);
+        System.out.println("Next: " + next);
+        while (true) {
+            startCoordinate = first;
+            first = next;
+            next = determineNextStep(startCoordinate, first);
+            System.out.println("Next: " + next);
+            steps++;
+            if (next == null) {
+                break;
+            }
+        }
 
-        determineNextStep(startCoordinate);
-
-        return "Sequences: " + steps;
+        return "Steps: " + (steps / 2);
     }
 
-    public static void determineNextStep(Coordinate c) {
-        steps++;
-        if (goLeft(c).isPresent()) {
-            determineNextStep(goLeft(c).get());
-        } else if (goRight(c).isPresent()) {
-            determineNextStep(goRight(c).get());
-        } else if (goUp(c).isPresent()) {
-            determineNextStep(goUp(c).get());
-        } else if (goDown(c).isPresent()){
-            determineNextStep(goDown(c).get());
+    public static Coordinate determineNextStep(Coordinate x0, Coordinate x1) {
+        if (x1.chr() == '-') {
+            if (x0.column() < x1.column()) {
+                return getRight(x1);
+            } else {
+                return getLeft(x1);
+            }
+        } else if (x1.chr() == '7') {
+            if (x0.row() == x1.row()) {
+                return getBelow(x1);
+            } else {
+                return getLeft(x1);
+            }
+        } else if (x1.chr() == 'F') {
+            if (x0.row() == x1.row()) {
+                return getBelow(x1);
+            } else {
+                return getRight(x1);
+            }
+        } else if (x1.chr() == 'J') {
+            if (x0.row() == x1.row()) {
+                return getAbove(x1);
+            } else {
+                return getLeft(x1);
+            }
+        } else if (x1.chr() == 'L') {
+            if (x0.row() == x1.row()) {
+                return getAbove(x1);
+            } else {
+                return getRight(x1);
+            }
+        } else if (x1.chr() == '|') {
+            if (x0.row() < x1.row()) {
+                return getBelow(x1);
+            } else {
+                return getAbove(x1);
+            }
         }
+        return null;
+    }
+
+    public static Coordinate determineFirstStep(Coordinate c) {
+        if (goLeft(c).isPresent()) {
+            return goLeft(c).get();
+        } else if (goRight(c).isPresent()) {
+            return goRight(c).get();
+        } else if (goUp(c).isPresent()) {
+            return goUp(c).get();
+        } else {
+            return goDown(c).get();
+        }
+    }
+
+    public static Coordinate getLeft(Coordinate c) {
+        return coordinates.get(c.row()).get(c.column() - 1);
+    }
+
+    public static Coordinate getRight(Coordinate c) {
+        return coordinates.get(c.row()).get(c.column() + 1);
+    }
+
+    public static Coordinate getAbove(Coordinate c) {
+        return coordinates.get(c.row() - 1).get(c.column());
+    }
+
+    public static Coordinate getBelow(Coordinate c) {
+        return coordinates.get(c.row() + 1).get(c.column());
     }
 
     public static Optional<Coordinate> goLeft(Coordinate c) {
@@ -98,19 +163,14 @@ public class Day10 {
 
             int lineNum = 0;
             while (scanner.hasNextLine()) {
-                Map<Integer, Character> mappedLine = new HashMap<>();
                 Map<Integer, Coordinate> coordinateLine = new HashMap<>();
                 String currentLine = scanner.nextLine();
                 for (int i = 0; i < currentLine.length(); i++) {
-                    mappedLine.put(i, currentLine.charAt(i));
                     coordinateLine.put(i, new Coordinate(lineNum, i, currentLine.charAt(i)));
                     if (currentLine.charAt(i) == 'S') {
-                        startPuntRij = lineNum;
-                        startPuntKolom = i;
                         startCoordinate = new Coordinate(lineNum, i, 'S');
                     }
                 }
-                mappedInput.put(lineNum, mappedLine);
                 coordinates.put(lineNum, coordinateLine);
                 lineNum++;
             }
